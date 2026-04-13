@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">Registro de contribuyentes</string>
+    <string name="title_home">Selección de Contribuyente</string>
+    <string name="title_add_fisica">Nuevo Registro Físico</string>
+    <string name="title_add_moral">Nuevo Registro Moral</string>
+    <string name="title_add_domicilio">Registro de dirección</string>
+    <string name="title_add_socio">Registro de socios</string>
+    <string name="title_edit_fisica">Editar Persona Física</string>
+    <string name="title_edit_moral">Editar Persona Moral</string>
+    <string name="title_edit_domicilio">Editar domicilio</string>
+    <string name="title_details_fisica">Detalle Física</string>
+    <string name="title_details_moral">Detalle Moral</string>
+    <string name="title_details_Socios">Detalle Socios</string>
+    <string name="title_listaMorales">Listas de contribuyentes morales</string>
+    <string name="title_listaFisicas">Lista de contribuyentes fisicas</string>
+    <string name="title_deleteMoral">Borrar persona Moral</string>
+    <string name="title_deleteFisica">Borrar persona Fisica</string>
+
+    <string name="label_rfc">RFC</string>
+    <string name="label_curp">CURP</string>
+    <string name="label_nombre">Nombre(s)</string>
+    <string name="label_apellidos">Apellidos</string>
+    <string name="label_razon_social">Denominación o Razón Social</string>
+    <string name="label_regimen_capital">Régimen de Capital</string>
+    <string name="label_fecha_const">Fecha de Constitución</string>
+    <string name="label_fecha_nac">Fecha de Nacimiento</string>
+    <string name="label_rfc_rep">RFC del Representante</string>
+    <string name="label_escritura">Núm. Escritura o Póliza</string>
+    <string name="label_act_econ">Actividad Económica</string>
+    <string name="label_reg_fiscal">Régimen Fiscal</string>
+    <string name="label_email">Correo Electrónico</string>
+    <string name="label_tel">Teléfono</string>
+
+    <string name="label_cp">Código Postal</string>
+    <string name="label_estado">Estado</string>
+    <string name="label_municipio">Municipio</string>
+    <string name="label_colonia">Colonia</string>
+    <string name="label_calle">Calle</string>
+    <string name="label_num_ext">Núm. Exterior</string>
+    <string name="label_num_int">Núm. Interior (Opcional)</string>
+    <string name="label_referencias">Referencias</string>
+    <string name="label_caracteristicas">Características</string>
+
+    <string name="btn_guardar">Guardar Registro</string>
+    <string name="btn_cancelar">Cancelar</string>
+    <string name="btn_add_socio">Añadir Socio</string>
+    <string name="btn_eliminar">Eliminar</string>
+    <string name="btn_editar">Editar</string>
+    <string name="btn_fisicas">Personas Físicas</string>
+    <string name="btn_morales">Personas Morales</string>
+
+    <string name="msg_lista_vacia">No se encontraron registros.</string>
+    <string name="msg_guardado_exitoso">¡Registro guardado con éxito!</string>
+    <string name="msg_error_guardar">Error al guardar los datos.</string>
+    <string name="msg_confirmar_eliminar">¿Estás seguro de eliminar este registro? Esta acción no se puede deshacer.</string>
+    <string name="msg_cargando_cp">Buscando información del CP...</string>
+</resources>
