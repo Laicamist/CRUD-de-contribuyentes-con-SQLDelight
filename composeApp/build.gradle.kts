@@ -49,9 +49,6 @@ kotlin {
             implementation(libs.kotlinx.datetime)
 
             //Para el codigo postal autocompletable
-            implementation("io.ktor:ktor-client-core:2.3.12") // Para realizar la conexión
-            implementation("io.ktor:ktor-client-content-negotiation:2.3.12") // Para entender archivos JSON
-            implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.12") // El traductor del archivo
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
         }
         commonTest.dependencies {

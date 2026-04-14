@@ -1,20 +1,36 @@
 -- 1. DEFINICIÓN DE TABLAS
+-- Tabla de Estados
+CREATE TABLE Estado (
+    id INTEGER NOT NULL PRIMARY KEY,
+    nombre TEXT NOT NULL
+);
+
+-- Tabla de Municipios (Relacionada con Estado)
+CREATE TABLE Municipio (
+    id INTEGER NOT NULL PRIMARY KEY,
+    estadoId INTEGER NOT NULL,
+    nombre TEXT NOT NULL,
+    FOREIGN KEY (estadoId) REFERENCES Estado(id)
+);
+
 -- Tabla de Domicilios (Base para Física y Moral)
 CREATE TABLE DOMICILIOFISCAL(
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     cp TEXT NOT NULL,
-    estado TEXT NOT NULL,
-    municipio TEXT NOT NULL,
+    estadoId INTEGER NOT NULL,
+    municipioId INTEGER NOT NULL,
+    tipoVialidad TEXT NOT NULL,
     localidad TEXT NOT NULL,
     colonia TEXT NOT NULL,
-    tipoVialidad TEXT NOT NULL,
     calle TEXT NOT NULL,
     numeroExterior TEXT NOT NULL,
     numeroInterior TEXT,
     entreCalle1 TEXT NOT NULL,
     entreCalle2 TEXT NOT NULL,
     referencias TEXT NOT NULL,
-    caracteristicas TEXT NOT NULL
+    caracteristicas TEXT NOT NULL,
+    FOREIGN KEY (estadoId) REFERENCES Estado(id),
+    FOREIGN KEY (municipioId) REFERENCES Municipio(id)
 );
 
 -- Tabla de Persona Física
@@ -58,80 +74,139 @@ CREATE TABLE SOCIOS_MORAL(
 -- 2. ENTRADA DE DATOS (INSERTS)
 insertarDomicilio:
 INSERT INTO DOMICILIOFISCAL (
-    cp, estado, municipio, localidad, colonia, tipoVialidad, calle,
-    numeroExterior, numeroInterior, entreCalle1, entreCalle2, referencias, caracteristicas
+    cp,
+    estadoId,
+    municipioId,
+    tipoVialidad,
+    localidad,
+    colonia,
+    calle,
+    numeroExterior,
+    numeroInterior,
+    entreCalle1,
+    entreCalle2,
+    referencias,
+    caracteristicas
 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
+-- Consultar el ID generado (Indispensable para las tablas de Persona)
 obtenerUltimoId:
 SELECT last_insert_rowid();
 
+-- Insertar Persona Física vinculando el idDomicilio
 insertarPersonaFisica:
 INSERT INTO PERSONAFISICA (
-    rfc, curp, nombre, apellidos, fechaDeNacimiento, email, telefono, actEconomica, regFiscal, idDomicilio
+    rfc,
+    curp,
+    nombre,
+    apellidos,
+    fechaDeNacimiento,
+    email,
+    telefono,
+    actEconomica,
+    regFiscal,
+    idDomicilio
 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
+-- Insertar Persona Moral vinculando el idDomicilio
 insertarPersonaMoral:
 INSERT INTO PERSONAMORAL (
-    rfc, denominacionORazonSocial, regimenCapital, fechaDeConstitucion, rfcDelRepresentante, numEscrituraOpoliza, actividadEconomica, idDomicilio
+    rfc,
+    denominacionORazonSocial,
+    regimenCapital,
+    fechaDeConstitucion,
+    rfcDelRepresentante,
+    numEscrituraOpoliza,
+    actividadEconomica,
+    idDomicilio
 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
+-- Insertar relación de socios para Personas Morales
 insertarSocio:
-INSERT INTO SOCIOS_MORAL (idPersonaMoral, rfcSocio)
-VALUES (?, ?);
+INSERT INTO SOCIOS_MORAL (
+    idPersonaMoral,
+    rfcSocio
+) VALUES (?, ?);
+
+-- Llenado de catálogos base
+insertarEstado:
+INSERT OR REPLACE INTO Estado(id, nombre) VALUES (?, ?);
+
+insertarMunicipio:
+INSERT OR REPLACE INTO Municipio(id, estadoId, nombre) VALUES (?, ?, ?);
+
+contarEstados:
+SELECT COUNT(*) FROM Estado;
 
 -- 3. SALIDA DE DATOS (CONSULTAS)
 consultarFisicaPorRFC:
-SELECT * FROM PERSONAFISICA
-JOIN DOMICILIOFISCAL ON PERSONAFISICA.idDomicilio = DOMICILIOFISCAL.id
-WHERE PERSONAFISICA.rfc = :rfc;
+SELECT rfc, curp, nombre, apellidos, fechaDeNacimiento, email, telefono, actEconomica, regFiscal, idDomicilio
+FROM PERSONAFISICA
+WHERE rfc = :rfc;
 
 consultarMoralPorRFC:
-SELECT * FROM PERSONAMORAL
-JOIN DOMICILIOFISCAL ON PERSONAMORAL.idDomicilio = DOMICILIOFISCAL.id
-WHERE PERSONAMORAL.rfc = :rfc;
+SELECT rfc, denominacionORazonSocial, regimenCapital, fechaDeConstitucion, rfcDelRepresentante, numEscrituraOpoliza, actividadEconomica, idDomicilio
+FROM PERSONAMORAL
+WHERE rfc = :rfc;
 
-consultarSociosPorRFCEmpresa:
-SELECT SOCIOS_MORAL.rfcSocio
+consultarDomicilioPorId:
+SELECT cp, estadoId, municipioId, tipoVialidad, localidad, colonia, calle, numeroExterior, numeroInterior, entreCalle1, entreCalle2, referencias, caracteristicas
+FROM DOMICILIOFISCAL
+WHERE id = :id;
+
+consultarSociosPorIdEmpresa:
+SELECT rfcSocio
 FROM SOCIOS_MORAL
-JOIN PERSONAMORAL ON SOCIOS_MORAL.idPersonaMoral = PERSONAMORAL.id
-WHERE PERSONAMORAL.rfc = :rfcEmpresa;
+WHERE idPersonaMoral = :idEmpresa;
 
--- Validaciones rápidas de existencia
+listarFisicasBase:
+SELECT rfc, nombre, apellidos, idDomicilio
+FROM PERSONAFISICA;
+
+listarMoralesBase:
+SELECT rfc, denominacionORazonSocial, idDomicilio
+FROM PERSONAMORAL;
+
+listarEstados:
+SELECT id, nombre FROM Estado ORDER BY nombre ASC;
+
+listarMunicipiosPorEstado:
+SELECT id, nombre FROM Municipio WHERE estadoId = :estadoId ORDER BY nombre ASC;
+
+obtenerNombreEstadoPorId:
+SELECT nombre FROM Estado WHERE id = :id;
+
+obtenerNombreMunicipioPorId:
+SELECT nombre FROM Municipio WHERE id = :id;
+
 existeRFCFisica:
 SELECT COUNT(*) FROM PERSONAFISICA WHERE rfc = :rfc;
 
 existeRFCMoral:
 SELECT COUNT(*) FROM PERSONAMORAL WHERE rfc = :rfc;
 
--- Consulta para Persona Física Completa
-listarPersonasFisicas:
-SELECT
-    F.rfc, F.curp, F.nombre, F.apellidos, F.fechaDeNacimiento, F.email, F.telefono, F.actEconomica, F.regFiscal,
-    D.cp, D.estado, D.municipio, D.localidad, D.colonia, D.tipoVialidad, D.calle, D.numeroExterior, D.numeroInterior, D.entreCalle1, D.entreCalle2, D.referencias, D.caracteristicas
-FROM PERSONAFISICA AS F
-JOIN DOMICILIOFISCAL AS D ON F.idDomicilio = D.id;
-
--- Consulta para Persona Moral Completa
-listarPersonasMorales:
-SELECT
-    M.rfc, M.denominacionORazonSocial, M.regimenCapital, M.fechaDeConstitucion, M.rfcDelRepresentante, M.numEscrituraOpoliza, M.actividadEconomica,
-    D.cp, D.estado, D.municipio, D.localidad, D.colonia, D.tipoVialidad, D.calle, D.numeroExterior, D.numeroInterior, D.entreCalle1, D.entreCalle2, D.referencias, D.caracteristicas
-FROM PERSONAMORAL AS M
-JOIN DOMICILIOFISCAL AS D ON M.idDomicilio = D.id;
-
 -- 4. ACTUALIZACIONES (UPDATES)
+actualizarPersonaFisica:
+UPDATE PERSONAFISICA
+SET email = :email,
+    telefono = :telefono,
+    actEconomica = :actEconomica,
+    regFiscal = :regFiscal
+WHERE rfc = :rfc;
 
-actualizarContactoFisica:
-UPDATE PERSONAFISICA SET email = :nuevoEmail, telefono = :nuevoTel WHERE rfc = :rfc;
-
-actualizarDatosEmpresa:
-UPDATE PERSONAMORAL SET denominacionORazonSocial = ?, regimenCapital = ?, actividadEconomica = ? WHERE rfc = :rfc;
+actualizarPersonaMoral:
+UPDATE PERSONAMORAL
+SET denominacionORazonSocial = :razonSocial,
+    regimenCapital = :regimenCapital,
+    actividadEconomica = :actividadEconomica,
+    rfcDelRepresentante = :rfcRepresentante,
+    numEscrituraOpoliza = :numEscritura
+WHERE rfc = :rfc;
 
 actualizarDomicilio:
-UPDATE DOMICILIOFISCAL SET
-    cp = ?, estado = ?, municipio = ?, localidad = ?, colonia = ?, tipoVialidad = ?,
-    calle = ?, numeroExterior = ?, numeroInterior = ?, entreCalle1 = ?, entreCalle2 = ?,
-    referencias = ?, caracteristicas = ?
+UPDATE DOMICILIOFISCAL
+SET cp = ?, estadoId = ?, municipioId = ?, localidad = ?, colonia = ?, tipoVialidad = ?,calle = ?, numeroExterior = ?, numeroInterior = ?,
+entreCalle1 = ?, entreCalle2 = ?,referencias = ?, caracteristicas = ?
 WHERE id = :idDomicilio;
 
 -- 5. ELIMINACIÓN LIMPIA (DELETES)
@@ -152,7 +227,6 @@ DELETE FROM PERSONAFISICA WHERE rfc = :rfc;
 
 eliminarPersonaMoral:
 DELETE FROM PERSONAMORAL WHERE rfc = :rfc;
-
 --Borrar domicilio
 eliminarDomicilioPorId:
 DELETE FROM DOMICILIOFISCAL WHERE id = :id;

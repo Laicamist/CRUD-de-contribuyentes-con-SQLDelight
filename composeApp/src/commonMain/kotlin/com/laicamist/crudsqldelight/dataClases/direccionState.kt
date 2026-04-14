@@ -14,5 +14,8 @@ data class direccionState(
     val entreCalle2: String = "",
     val referencias: String = "",
     val caracteristicas: String = "",
+    // Agrega estos dos campos:
+    val estadoId: Long = 0,
+    val municipioId: Long = 0,
     val isLoadingCP: Boolean = false // Para el indicador de carga de Ktor
 )

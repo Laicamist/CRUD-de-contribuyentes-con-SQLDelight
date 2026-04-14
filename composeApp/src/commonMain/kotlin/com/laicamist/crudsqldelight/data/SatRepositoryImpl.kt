@@ -1,30 +1,36 @@
 package com.laicamist.crudsqldelight.data
 
-import cache.ConsultarFisicaPorRFC
-import cache.ConsultarMoralPorRFC
-import cache.ListarPersonasFisicas
-import cache.ListarPersonasMorales
-import cache.ObtenerIdsParaBorrarMoral
+import cache.*
 import com.laicamist.crudsqldelight.cache.AppDatabase
 import com.laicamist.crudsqldelight.cache.DatabaseDriverFactory
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import com.laicamist.crudsqldelight.dataClases.DataSeeder
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
 
 class SatRepositoryImpl(databaseDriverFactory: DatabaseDriverFactory) : SatRepository {
     private val database = AppDatabase(databaseDriverFactory.createDriver())
     private val dbQuery = database.appDatabaseQueries
-    // --- INSERTS ---
+
+    init {
+        // 2. Al arrancar el repositorio, llamamos al Seeder
+        // Le pasamos la instancia de 'database' para que haga su magia
+        DataSeeder.seed(database)
+    }
+
+    //1. ENTRADA DE DATOS (INSERTS)
     override fun insertarDomicilio(
-        cp: String, estado: String, municipio: String, localidad: String,
-        colonia: String, tipoVialidad: String, calle: String,
+        cp: String, estadoId: Long, municipioId: Long, tipoVialidad: String,
+        localidad: String, colonia: String, calle: String,
         numeroExterior: String, numeroInterior: String?, entreCalle1: String,
         entreCalle2: String, referencias: String, caracteristicas: String
     ) {
-        dbQuery.insertarDomicilio(cp, estado, municipio, localidad, colonia, tipoVialidad, calle, numeroExterior, numeroInterior, entreCalle1, entreCalle2, referencias, caracteristicas)
+        dbQuery.insertarDomicilio(
+            cp, estadoId, municipioId, tipoVialidad, localidad, colonia,
+            calle, numeroExterior, numeroInterior,
+            entreCalle1, entreCalle2, referencias, caracteristicas
+        )
     }
 
     override fun obtenerUltimoId(): Long = dbQuery.obtenerUltimoId().executeAsOne()
@@ -49,15 +55,26 @@ class SatRepositoryImpl(databaseDriverFactory: DatabaseDriverFactory) : SatRepos
         dbQuery.insertarSocio(idPersonaMoral, rfcSocio)
     }
 
-    // --- CONSULTAS Y LISTADOS ---
+    override fun insertarEstado(id: Long, nombre: String) {
+        dbQuery.insertarEstado(id, nombre)
+    }
+
+    override fun insertarMunicipio(id: Long, estadoId: Long, nombre: String) {
+        dbQuery.insertarMunicipio(id, estadoId, nombre)
+    }
+
+    //2. SALIDA DE DATOS (CONSULTAS)
     override fun consultarFisicaPorRFC(rfc: String): ConsultarFisicaPorRFC? =
         dbQuery.consultarFisicaPorRFC(rfc).executeAsOneOrNull()
 
     override fun consultarMoralPorRFC(rfc: String): ConsultarMoralPorRFC? =
         dbQuery.consultarMoralPorRFC(rfc).executeAsOneOrNull()
 
-    override fun consultarSociosPorRFCEmpresa(rfcEmpresa: String): List<String> =
-        dbQuery.consultarSociosPorRFCEmpresa(rfcEmpresa).executeAsList()
+    override fun consultarDomicilioPorId(id: Long): ConsultarDomicilioPorId? =
+        dbQuery.consultarDomicilioPorId(id).executeAsOneOrNull()
+
+    override fun consultarSociosPorIdEmpresa(idEmpresa: Long): List<String> =
+        dbQuery.consultarSociosPorIdEmpresa(idEmpresa).executeAsList()
 
     override fun existeRFCFisica(rfc: String): Boolean =
         dbQuery.existeRFCFisica(rfc).executeAsOne() > 0
@@ -65,38 +82,47 @@ class SatRepositoryImpl(databaseDriverFactory: DatabaseDriverFactory) : SatRepos
     override fun existeRFCMoral(rfc: String): Boolean =
         dbQuery.existeRFCMoral(rfc).executeAsOne() > 0
 
-    override fun listarTodasLasFisicas(): Flow<List<ListarPersonasFisicas>> {
-        return dbQuery.listarPersonasFisicas()
-            .asFlow()
-            .mapToList(Dispatchers.IO)
+    override fun contarEstados(): Long =
+        dbQuery.contarEstados().executeAsOne()
+
+    //3.LISTADOS
+    override fun listarFisicasBase(): Flow<List<ListarFisicasBase>> =
+        dbQuery.listarFisicasBase().asFlow().mapToList(Dispatchers.IO)
+
+    override fun listarMoralesBase(): Flow<List<ListarMoralesBase>> =
+        dbQuery.listarMoralesBase().asFlow().mapToList(Dispatchers.IO)
+
+    override fun listarEstados(): Flow<List<Estado>> =
+        dbQuery.listarEstados().asFlow().mapToList(Dispatchers.IO)
+
+    override fun listarMunicipiosPorEstado(estadoId: Long): Flow<List<ListarMunicipiosPorEstado>> =
+        dbQuery.listarMunicipiosPorEstado(estadoId).asFlow().mapToList(Dispatchers.IO)
+
+    override fun obtenerNombreEstado(id: Long): String? =
+        dbQuery.obtenerNombreEstadoPorId(id).executeAsOneOrNull()
+
+    override fun obtenerNombreMunicipio(id: Long): String? =
+        dbQuery.obtenerNombreMunicipioPorId(id).executeAsOneOrNull()
+
+    //4. UPDATES
+    override fun actualizarPersonaFisica(rfc: String, nuevoEmail: String, nuevoTel: String, actEconomica: String, regFiscal: String) {
+        dbQuery.actualizarPersonaFisica(nuevoEmail, nuevoTel, actEconomica, regFiscal, rfc)
     }
 
-    override fun listarTodasLasMorales(): Flow<List<ListarPersonasMorales>> {
-        return dbQuery.listarPersonasMorales()
-            .asFlow()
-            .mapToList(Dispatchers.IO)
-    }
-
-    // --- UPDATES ---
-    override fun actualizarContactoFisica(rfc: String, nuevoEmail: String, nuevoTel: String) {
-        dbQuery.actualizarContactoFisica(nuevoEmail, nuevoTel, rfc)
-    }
-
-    override fun actualizarDatosEmpresa(rfc: String, denominacionORazonSocial: String, regimenCapital: String, actividadEconomica: String) {
-        dbQuery.actualizarDatosEmpresa(denominacionORazonSocial, regimenCapital, actividadEconomica, rfc)
+    override fun actualizarPersonaMoral(rfc: String, razonSocial: String, regimenCapital: String, actividadEconomica: String, rfcRepresentante: String, numEscritura: String) {
+        dbQuery.actualizarPersonaMoral(razonSocial, regimenCapital, actividadEconomica, rfcRepresentante, numEscritura, rfc)
     }
 
     override fun actualizarDomicilio(
-        idDomicilio: Long, cp: String, estado: String, municipio: String,
+        idDomicilio: Long, cp: String, estadoId: Long, municipioId: Long,
         localidad: String, colonia: String, tipoVialidad: String, calle: String,
         numeroExterior: String, numeroInterior: String?, entreCalle1: String,
         entreCalle2: String, referencias: String, caracteristicas: String
     ) {
-        dbQuery.actualizarDomicilio(cp, estado, municipio, localidad, colonia, tipoVialidad, calle, numeroExterior, numeroInterior, entreCalle1, entreCalle2, referencias, caracteristicas, idDomicilio)
+        dbQuery.actualizarDomicilio(cp, estadoId, municipioId, localidad, colonia, tipoVialidad, calle, numeroExterior, numeroInterior, entreCalle1, entreCalle2, referencias, caracteristicas, idDomicilio)
     }
 
-    // --- ELIMINACIÓN CON LÓGICA DE NEGOCIO ---
-
+    //5. ELIMINACIÓN
     override fun obtenerIdDomicilioFisica(rfc: String): Long? =
         dbQuery.obtenerIdsParaBorrarFisica(rfc).executeAsOneOrNull()
 
@@ -109,24 +135,25 @@ class SatRepositoryImpl(databaseDriverFactory: DatabaseDriverFactory) : SatRepos
 
     override fun eliminarPersonaFisica(rfc: String) {
         database.transaction {
-            // FÍSICA: Regresa 1 columna -> Dato directo (Sin paréntesis)
-            val idDom = dbQuery.obtenerIdsParaBorrarFisica(rfc).executeAsOne()
+            val idDom = dbQuery.obtenerIdsParaBorrarFisica(rfc).executeAsOneOrNull()
             dbQuery.eliminarPersonaFisica(rfc)
-            dbQuery.eliminarDomicilioPorId(idDom)
+            idDom?.let { dbQuery.eliminarDomicilioPorId(it) }
         }
     }
 
     override fun eliminarPersonaMoral(rfc: String) {
         database.transaction {
-            // MORAL: Regresa 2 columnas -> Data Class (Con paréntesis)
-            val (idEmpresa, idDom) = dbQuery.obtenerIdsParaBorrarMoral(rfc).executeAsOne()
-            dbQuery.eliminarSociosPorEmpresa(idEmpresa)
-            dbQuery.eliminarPersonaMoral(rfc)
-            dbQuery.eliminarDomicilioPorId(idDom)
+            val ids = dbQuery.obtenerIdsParaBorrarMoral(rfc).executeAsOneOrNull()
+            ids?.let {
+                dbQuery.eliminarSociosPorEmpresa(it.id)
+                dbQuery.eliminarPersonaMoral(rfc)
+                dbQuery.eliminarDomicilioPorId(it.idDomicilio)
+            }
         }
     }
 
     override fun eliminarDomicilioPorId(id: Long) {
         dbQuery.eliminarDomicilioPorId(id)
     }
+
 }
