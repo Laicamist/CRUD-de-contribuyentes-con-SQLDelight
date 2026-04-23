@@ -17,67 +17,67 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cache.ListarFisicasBase
-import com.laicamist.crudsqldelight.NavigationDestination
-import com.laicamist.crudsqldelight.Ui.viewModels.pFisicasViewModel
+import androidx.navigation.NavController
+import cache.Contribuyente
+import com.laicamist.crudsqldelight.Ui.theme.AppTheme
+import com.laicamist.crudsqldelight.Ui.viewModels.DataViewModel
+import com.laicamist.crudsqldelight.Ui.viewModels.SatViewModel
+import com.laicamist.crudsqldelight.pantallas
 import crudsqldelight.composeapp.generated.resources.Res
 import crudsqldelight.composeapp.generated.resources.msg_lista_vacia
 import crudsqldelight.composeapp.generated.resources.title_listaFisicas
 import org.jetbrains.compose.resources.stringResource
 
-// 1. Objeto de navegación (Se queda igual)
-object listaFisicas : NavigationDestination {
-    override val route: String = "listaFisicas"
-    override val titleRes = Res.string.title_listaFisicas
-}
-
-// 2. CAMBIO: Nombre con Mayúscula y agregamos @Composable
 @Composable
-fun ListaFisicasScreen(
-    viewModel: pFisicasViewModel,
-    onNavigateToAdd: () -> Unit,
-    onNavigateToDetails: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    // 3. CAMBIO: Asegúrate que el nombre coincida con tu ViewModel (listaPFisicas)
-    val personas by viewModel.listaFisicas.collectAsState()
-
-    Scaffold(
-        modifier = modifier,
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onNavigateToAdd,
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Añadir Persona")
-            }
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    ) { padding ->
-        if (personas.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = stringResource(Res.string.msg_lista_vacia),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.outline
-                )
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(padding),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(personas) { persona ->
-                    ItemFisicaCard(
-                        persona = persona,
-                        onClick = { onNavigateToDetails(persona.rfc) }
+fun ListaFisicasScreen(navController: NavController, viewModel: DataViewModel, satViewModel: SatViewModel) {
+    // Enlista todos los contribuyentes y filtra por tipo Fisica
+    val todosLosContribuyentes by satViewModel.contribuyentes.collectAsState()
+    val personasFisicas = todosLosContribuyentes.filter {
+        it.tipo.equals("Fisica", ignoreCase = true)
+    }
+    satViewModel.loadContribuyentes()
+    viewModel.clearFields()
+    AppTheme {
+        Scaffold(
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { navController.navigate(pantallas.addF.name) },
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Añadir Persona")
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.background
+        ) { padding ->
+            if (personasFisicas.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(padding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(Res.string.msg_lista_vacia),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.outline
                     )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize().padding(padding),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(personasFisicas) { persona ->
+                        ItemFisicaCard(
+                            persona = persona,
+                            viewModel = satViewModel,
+                            onClick = {
+                                satViewModel.cargarContribuyente(persona.id)
+                                navController.navigate(pantallas.detailsF.name)
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -86,7 +86,8 @@ fun ListaFisicasScreen(
 
 @Composable
 fun ItemFisicaCard(
-    persona: ListarFisicasBase,
+    persona: Contribuyente,
+    viewModel: SatViewModel,
     onClick: () -> Unit
 ) {
     Card(
@@ -97,46 +98,79 @@ fun ItemFisicaCard(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         )
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Surface(
-                modifier = Modifier.size(48.dp),
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+        Column(modifier = Modifier.padding(16.dp)) {
+            // Cabecera: Nombre y CURP (Tu diseño original)
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                Surface(
+                    modifier = Modifier.size(48.dp),
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = null,
+                        modifier = Modifier.padding(12.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    val nombreCompleto = "${persona.nombre} ${persona.apellido_paterno} ${persona.apellido_materno ?: ""}"
+                    Text(
+                        text = nombreCompleto.trim(),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = persona.curp ?: "Sin CURP",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+
                 Icon(
-                    imageVector = Icons.Default.Person,
+                    imageVector = Icons.Default.KeyboardArrowRight,
                     contentDescription = null,
-                    modifier = Modifier.padding(12.dp),
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = MaterialTheme.colorScheme.outlineVariant
                 )
             }
+            Spacer(modifier = Modifier.height(12.dp))
+            HorizontalDivider(thickness = 0.5.dp, color = MaterialTheme.colorScheme.outlineVariant)
+            Spacer(modifier = Modifier.height(12.dp))
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                InfoRowLabel("Email", persona.email)
+                InfoRowLabel("Teléfono", persona.telefono)
+                InfoRowLabel("Régimen", persona.regimen_fiscal)
+                val estado = viewModel.getEstadoById(persona.estado_id).nombre
+                val municipio = viewModel.getMunicipioById(persona.municipio_id).nombre
+                InfoRowLabel("Ubicación", "$municipio, $estado")
 
-            Column(modifier = Modifier.weight(1f)) {
-                // CAMBIO: Asegúrate que los nombres de campos coincidan con SQLDelight (nombres/apellidos)
-                Text(
-                    text = "${persona.nombre} ${persona.apellidos}",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = persona.rfc,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontWeight = FontWeight.Medium
-                )
+                InfoRowLabel("Dirección", "${persona.calle} No. ${persona.numero_exterior}, Col. ${persona.colonia}")
             }
-
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowRight,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.outlineVariant
-            )
         }
+    }
+}
+
+@Composable
+fun InfoRowLabel(label: String, value: String?) {
+    Row(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = "$label: ",
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = value ?: "N/A",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }

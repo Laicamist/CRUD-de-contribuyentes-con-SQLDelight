@@ -1,140 +1,274 @@
 package com.laicamist.crudsqldelight.Ui.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.ui.Modifier
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.laicamist.crudsqldelight.NavigationDestination
-import com.laicamist.crudsqldelight.Ui.viewModels.pFisicasViewModel
+import com.laicamist.crudsqldelight.Ui.viewModels.DataViewModel
+import com.laicamist.crudsqldelight.Ui.viewModels.SatViewModel
 import crudsqldelight.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
-
-object AddFisicaDestination : NavigationDestination {
-    override val route = "add_fisica"
-    override val titleRes = Res.string.title_add_fisica
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddFisicaScreen(
-    viewModel: pFisicasViewModel,
+    dataViewModel: DataViewModel,
+    satViewModel: SatViewModel,
     onNavigateBack: () -> Unit
 ) {
-    LaunchedEffect(Unit) {
-        viewModel.resetearFormulario()
-    }
-    val fisicaState by viewModel.pfisicaState.collectAsState()
-    val direccionState by viewModel.dState.collectAsState()
-    val estados by viewModel.estados.collectAsState()
-    val municipios by viewModel.municipios.collectAsState()
 
-    val canProceedToDir by viewModel.desbloquearDomicilio.collectAsState()
-    val canSave by viewModel.desbloquearGuardar.collectAsState()
+    val fisica by dataViewModel.fisicaState.collectAsState()
+    val direccion by dataViewModel.direccionState.collectAsState()
+    val identificacionCompleta = fisica.nombre.isNotBlank() &&
+            fisica.apellidos.isNotBlank() &&
+            fisica.rfc.length == 13 &&
+            fisica.curp.length == 18 &&
+            fisica.regFiscal.isNotBlank() &&
+            fisica.telefono.length == 10
 
-    // Opciones para ComboBoxes simples
+    val domicilioCompleto = direccion.estadoId != 0L &&
+            direccion.municipioId != 0L &&
+            direccion.cp.length == 5 &&
+            direccion.calle.isNotBlank() &&
+            direccion.colonia.isNotBlank() &&
+            direccion.tipoVialidad.isNotBlank()
+
+    val estados by satViewModel.estados.collectAsState()
+    val municipiosMap by satViewModel.municipios.collectAsState()
+    val municipiosDelEstado = municipiosMap[direccion.estadoId] ?: emptyList()
+
     val regimenes = listOf("Sueldos y Salarios","Ingresos Asimilados a Salarios","Enajenación de Bienes"
         ,"Ingresos por Dividendos","RESICO", "Actividad Empresarial", "Arrendamiento", "Servicios Profesionales")
     val vialidades = listOf("Calle", "Avenida", "Boulevard", "Circuito", "Privada")
-    val actEconomica = listOf("Servicios Profesionales","Comercio al por Menor","Servicios de Hostelería y Preparación de Alimentos"
-        ,"Servicios Educativos","Servicios de Transporte","Actividades Agrícolas y Ganaderas","Servicios de Salud","Construcción", "Servicios inmobiliarios")
-    LaunchedEffect(fisicaState.guardadoExitoso) {
-        if (fisicaState.guardadoExitoso) onNavigateBack()
-    }
 
-    Scaffold() { padding ->
+    Scaffold { padding ->
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 20.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(bottom = 32.dp)
+            contentPadding = PaddingValues(top = 16.dp, bottom = 32.dp)
         ) {
-            // IDENTIFICACIÓN
             item { SectionHeader("Datos de Identificación") }
+
             item {
                 Card(elevation = CardDefaults.cardElevation(2.dp)) {
                     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        CustomTextField(fisicaState.nombre, { viewModel.onFisicaChange("nombre", it) }, "Nombre(s)")
-                        CustomTextField(fisicaState.apellidos, { viewModel.onFisicaChange("apellidos", it) }, "Apellidos")
-                        //Custom textfield que se deivide en 2 a lo largo del espacio de un textfield "normal"
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            CustomTextField(fisicaState.rfc, { viewModel.onFisicaChange("rfc", it.uppercase()) }, "RFC", Modifier.weight(1f), 13)
-                            CustomTextField(fisicaState.curp, { viewModel.onFisicaChange("curp", it.uppercase()) }, "CURP", Modifier.weight(1.2f), 18)
-                        }
-                        // Fecha con Máscara Automática
                         CustomTextField(
-                            value = fisicaState.fechaDeNacimiento,
-                            onValueChange = { input ->
-                                val digits = input.filter { it.isDigit() }
-                                val formatted = when {
-                                    digits.length <= 2 -> digits
-                                    digits.length <= 4 -> "${digits.substring(0, 2)}/${digits.substring(2)}"
-                                    else -> "${digits.substring(0, 2)}/${digits.substring(2, 4)}/${digits.substring(4, minOf(digits.length, 8))}"
-                                }
-                                viewModel.onFisicaChange("fechaNac", formatted)
+                            value = fisica.nombre,
+                            onValueChange = { nuevo -> dataViewModel.updateFisica { it.copy(nombre = nuevo) } },
+                            label = stringResource(Res.string.label_nombre)
+                        )
+
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            CustomTextField(
+                                value = fisica.apellidos,
+                                onValueChange = { nuevo -> dataViewModel.updateFisica { it.copy(apellidos = nuevo) } },
+                                label = stringResource(Res.string.label_apellidos),
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                        CustomTextField(
+                            value = fisica.rfc,
+                            onValueChange = { nuevo ->
+                                if (nuevo.length <= 13) dataViewModel.updateFisica { it.copy(rfc = nuevo.uppercase()) }
                             },
-                            label = "Fecha de Nacimiento (DD/MM/AAAA)",
+                            label = stringResource(Res.string.label_rfc),
+                            maxChar = 13
+                        )
+
+                        CustomTextField(
+                            value = fisica.curp,
+                            onValueChange = { nuevo ->
+                                if (nuevo.length <= 18) dataViewModel.updateFisica { it.copy(curp = nuevo.uppercase()) }
+                            },
+                            label = stringResource(Res.string.label_curp),
+                            maxChar = 18
+                        )
+
+                        CustomTextField(
+                            value = fisica.fechaDeNacimiento,
+                            onValueChange = { nuevo ->
+                                val soloNumeros = nuevo.filter { it.isDigit() }
+                                val formateado = buildString {
+                                    for (i in soloNumeros.indices) {
+                                        append(soloNumeros[i])
+                                        if ((i == 1 || i == 3) && i != soloNumeros.lastIndex) {
+                                            append("/")
+                                        }
+                                    }
+                                }
+                                if (formateado.length <= 10) {
+                                    dataViewModel.updateFisica { it.copy(fechaDeNacimiento = formateado) }
+                                }
+                            },
+                            label = stringResource(Res.string.label_fecha_nac),
+                        )
+
+                        CustomTextField(
+                            value = fisica.email,
+                            onValueChange = { nuevo -> dataViewModel.updateFisica { it.copy(email = nuevo) } },
+                            label = stringResource(Res.string.label_email)
+                        )
+
+                        CustomTextField(
+                            value = fisica.telefono,
+                            onValueChange = { nuevo ->
+                                if (nuevo.all { it.isDigit() } && nuevo.length <= 10) {
+                                    dataViewModel.updateFisica { it.copy(telefono = nuevo) }
+                                }
+                            },
+                            label = stringResource(Res.string.label_tel),
                             maxChar = 10
                         )
 
-                        CustomTextField(fisicaState.email, { viewModel.onFisicaChange("email", it) }, "Correo Electrónico")
-                        CustomTextField(fisicaState.telefono, { viewModel.onFisicaChange("tel", it) }, "Teléfono (10 dígitos)", maxChar = 10)
-                        //Combo boxes
-                        CustomComboBox("Régimen Fiscal", regimenes, { it }, regimenes.find { it == fisicaState.regFiscal }, { viewModel.onFisicaChange("regFiscal", it) })
-                        CustomComboBox(label = "Actividad Económica", opciones = actEconomica, textoOpcion = { it }, seleccionado = actEconomica.find { it == fisicaState.actEconomica }, onSeleccion = { viewModel.onFisicaChange("actEcon", it) })
+                        CustomComboBox(
+                            label = stringResource(Res.string.label_reg_fiscal),
+                            opciones = regimenes,
+                            textoOpcion = { it },
+                            seleccionado = regimenes.find { it == fisica.regFiscal },
+                            onSeleccion = { nuevo -> dataViewModel.updateFisica { it.copy(regFiscal = nuevo) } }
+                        )
+
+                        CustomComboBox(
+                            label = stringResource(Res.string.label_act_econ),
+                            opciones = listOf("Servicios Profesionales","Comercio al por Menor","Servicios de Hostelería y Preparación de Alimentos"
+                                ,"Servicios Educativos","Servicios de Transporte","Actividades Agrícolas y Ganaderas","Servicios de Salud","Construcción", "Servicios inmobiliarios"),
+                            textoOpcion = { it },
+                            seleccionado = fisica.actEconomica.takeIf { it.isNotBlank() },
+                            onSeleccion = { nuevo -> dataViewModel.updateFisica { it.copy(actEconomica = nuevo) } }
+                        )
                     }
                 }
             }
 
-            // --- SECCIÓN 2: DOMICILIO (Solo aparece si la Sección 1 es válida) ---
-            if (canProceedToDir) {
-                item { SectionHeader("Domicilio Fiscal") }
+            if (identificacionCompleta) {
+                item { SectionHeader(stringResource(Res.string.title_add_domicilio)) }
+
                 item {
                     Card(elevation = CardDefaults.cardElevation(2.dp)) {
                         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                CustomTextField(direccionState.cp, { viewModel.onDireccionChange("cp", it) }, "C.P.", Modifier.weight(1f), 5)
-                                CustomComboBox("Vialidad", vialidades, { it }, vialidades.find { it == direccionState.tipoVialidad }, { viewModel.onDireccionChange("vialidad", it) }, Modifier.weight(1.5f))
+                                CustomTextField(
+                                    value = direccion.cp,
+                                    onValueChange = { nuevo ->
+                                        if (nuevo.all { it.isDigit() } && nuevo.length <= 5) {
+                                            dataViewModel.updateDireccion { it.copy(cp = nuevo) }
+                                        }
+                                    },
+                                    label = stringResource(Res.string.label_cp),
+                                    modifier = Modifier.weight(1f),
+                                    maxChar = 5
+                                )
+                                CustomComboBox(
+                                    label = "Vialidad",
+                                    opciones = vialidades,
+                                    textoOpcion = { it },
+                                    seleccionado = vialidades.find { it == direccion.tipoVialidad },
+                                    onSeleccion = { nuevo -> dataViewModel.updateDireccion { it.copy(tipoVialidad = nuevo) } },
+                                    modifier = Modifier.weight(1.5f)
+                                )
                             }
 
-                            CustomComboBox("Estado", estados, { it.nombre }, estados.find { it.id == direccionState.estadoId }, { viewModel.onDireccionChange("estadoId", it.id) })
+                            CustomComboBox(
+                                label = stringResource(Res.string.label_estado),
+                                opciones = estados,
+                                textoOpcion = { it.nombre },
+                                seleccionado = estados.find { it.id == direccion.estadoId },
+                                onSeleccion = { est ->
+                                    dataViewModel.updateDireccion { it.copy(estadoId = est.id, municipioId = 0L) }
+                                }
+                            )
 
-                            CustomComboBox("Municipio", municipios, { it.nombre }, municipios.find { it.id == direccionState.municipioId }, { viewModel.onDireccionChange("municipioId", it.id) })
+                            CustomComboBox(
+                                label = stringResource(Res.string.label_municipio),
+                                opciones = municipiosDelEstado,
+                                textoOpcion = { it.nombre },
+                                seleccionado = municipiosDelEstado.find { it.id == direccion.municipioId },
+                                onSeleccion = { mun ->
+                                    dataViewModel.updateDireccion { it.copy(municipioId = mun.id) }
+                                }
+                            )
 
-                            CustomTextField(direccionState.calle, { viewModel.onDireccionChange("calle", it) }, "Calle")
+                            CustomTextField(
+                                value = direccion.calle,
+                                onValueChange = { nuevo -> dataViewModel.updateDireccion { it.copy(calle = nuevo) } },
+                                label = stringResource(Res.string.label_calle)
+                            )
 
                             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                CustomTextField(direccionState.numeroExterior, { viewModel.onDireccionChange("nExt", it) }, "Ext.", Modifier.weight(1f))
-                                CustomTextField(direccionState.numeroInterior ?: "", { viewModel.onDireccionChange("nInt", it) }, "Int.", Modifier.weight(1f))
+                                CustomTextField(
+                                    value = direccion.numeroExterior,
+                                    onValueChange = { nuevo -> dataViewModel.updateDireccion { it.copy(numeroExterior = nuevo) } },
+                                    label = stringResource(Res.string.label_num_ext),
+                                    modifier = Modifier.weight(1f)
+                                )
+                                CustomTextField(
+                                    value = direccion.numeroInterior ?: "",
+                                    onValueChange = { nuevo -> dataViewModel.updateDireccion { it.copy(numeroInterior = nuevo) } },
+                                    label = stringResource(Res.string.label_num_int),
+                                    modifier = Modifier.weight(1f)
+                                )
                             }
 
-                            CustomTextField(direccionState.colonia, { viewModel.onDireccionChange("colonia", it) }, "Colonia")
-
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                CustomTextField(direccionState.entreCalle1, { viewModel.onDireccionChange("entre1", it) }, "Entre calle 1", Modifier.weight(1f))
-                                CustomTextField(direccionState.entreCalle2, { viewModel.onDireccionChange("entre2", it) }, "Entre calle 2", Modifier.weight(1f))
-                            }
-
-                            CustomTextField(direccionState.referencias, { viewModel.onDireccionChange("ref", it) }, "Referencias")
+                            CustomTextField(
+                                value = direccion.colonia,
+                                onValueChange = { nuevo -> dataViewModel.updateDireccion { it.copy(colonia = nuevo) } },
+                                label = stringResource(Res.string.label_colonia)
+                            )
                         }
                     }
                 }
+                item {
+                    Card(elevation = CardDefaults.cardElevation(2.dp)) {
+                        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                CustomTextField(
+                                    value = direccion.entreCalle1 ?: "",
+                                    onValueChange = { nuevo -> dataViewModel.updateDireccion { it.copy(entreCalle1 = nuevo) } },
+                                    label = "Entre Calle 1",
+                                    modifier = Modifier.weight(1f)
+                                )
+                                CustomTextField(
+                                    value = direccion.entreCalle2 ?: "",
+                                    onValueChange = { nuevo -> dataViewModel.updateDireccion { it.copy(entreCalle2 = nuevo) } },
+                                    label = "Entre Calle 2",
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
 
-                // --- BOTÓN DE GUARDADO ---
+                            CustomTextField(
+                                value = direccion.referencias ?: "",
+                                onValueChange = { nuevo -> dataViewModel.updateDireccion { it.copy(referencias = nuevo) } },
+                                label = "Referencias Visuales / Adicionales",
+                                supportingText = "Ej: Portón café, frente a parque"
+                            )
+
+                            CustomTextField(
+                                value = direccion.caracteristicas ?: "",
+                                onValueChange = { nuevo -> dataViewModel.updateDireccion { it.copy(caracteristicas = nuevo) } },
+                                label = "Características del Domicilio",
+                                supportingText = "Descripción física de la fachada"
+                            )
+                        }
+                    }
+                }
                 item {
                     Button(
-                        onClick = { viewModel.guardarTodo() },
-                        enabled = canSave,
+                        onClick = {
+                            dataViewModel.addPersonaFisica()
+                            onNavigateBack()
+                        },
                         modifier = Modifier.fillMaxWidth().height(56.dp),
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(12.dp),
+                        enabled = domicilioCompleto
                     ) {
-                        Text("GUARDAR REGISTRO")
+                        Text(stringResource(Res.string.btn_guardar))
                     }
                 }
             }
@@ -148,7 +282,9 @@ fun CustomTextField(
     onValueChange: (String) -> Unit,
     label: String,
     modifier: Modifier = Modifier,
-    maxChar: Int? = null
+    maxChar: Int? = null,
+    isError: Boolean = false,
+    supportingText: String? = null
 ) {
     OutlinedTextField(
         value = value,
@@ -156,10 +292,11 @@ fun CustomTextField(
             if (maxChar == null || it.length <= maxChar) onValueChange(it)
         },
         label = { Text(label) },
+        isError = isError,
+        supportingText = supportingText?.let { { Text(it) } },
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        singleLine = true,
-        textStyle = MaterialTheme.typography.bodyLarge
+        singleLine = true
     )
 }
 
@@ -198,7 +335,8 @@ fun <T> CustomComboBox(
             label = { Text(label) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier.menuAnchor().fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
+            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
         )
 
         ExposedDropdownMenu(
@@ -211,7 +349,8 @@ fun <T> CustomComboBox(
                     onClick = {
                         onSeleccion(opcion)
                         expanded = false
-                    }
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
                 )
             }
         }

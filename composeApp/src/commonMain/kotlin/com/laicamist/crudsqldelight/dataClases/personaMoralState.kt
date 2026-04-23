@@ -5,7 +5,6 @@ data class personaMoralState(
     val denominacionORazonSocial: String = "",
     val regimenCapital: String = "",
     val fechaDeConstitucion: String = "",
-    val rfcDelRepresentante: String = "",
     val numEscrituraOpoliza: String = "",
     val actividadEconomica: String = "",
     val mensajeError: String? = null,

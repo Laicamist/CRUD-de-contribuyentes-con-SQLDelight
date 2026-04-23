@@ -1,0 +1,284 @@
+[
+  {
+    "estado": "Aguascalientes",
+    "municipios": [
+      "Aguascalientes", "Asientos", "Calvillo", "Cosío", "Jesús María",
+      "Pabellón de Arteaga", "Rincón de Romos", "San José de Gracia",
+      "Tepezalá", "El Llano", "San Francisco de los Romo"
+    ]
+  },
+  {
+    "estado": "Baja California",
+    "municipios": [
+      "Ensenada", "Mexicali", "Tecate", "Tijuana", "Playas de Rosarito", "San Quintín", "San Felipe"
+    ]
+  },
+  {
+    "estado": "Baja California Sur",
+    "municipios": [
+      "Comondú", "La Paz", "Los Cabos", "Loreto", "Mulegé"
+    ]
+  },
+  {
+    "estado": "Campeche",
+    "municipios": [
+      "Calkiní", "Campeche", "Carmen", "Champotón", "Hecelchakán",
+      "Hopelchén", "Palizada", "Tenabo", "Escárcega", "Calakmul", "Candelaria", "Seybaplaya", "Dzibalchén"
+    ]
+  },
+  {
+    "estado": "Chiapas",
+    "municipios": [
+      "Comitán de Domínguez", "Chiapa de Corzo", "Ocosingo", "Palenque",
+      "San Cristóbal de las Casas", "Tapachula", "Tonalá", "Tuxtla Gutiérrez",
+      "Tuxtla Chico", "Villaflores", "Arriaga", "Bochil", "Cintalapa",
+      "Copainalá", "Huixtla", "Mapastepec", "Motozintla", "Pichucalco",
+      "Simojovel", "Socoltenango", "Suchiate", "Yajalón", "Altamirano", "Chamula", "Las Margaritas"
+    ]
+  },
+  {
+    "estado": "Chihuahua",
+    "municipios": [
+      "Chihuahua", "Ciudad Juárez", "Delicias", "Cuauhtémoc", "Hidalgo del Parral",
+      "Ojinaga", "Camargo", "Guachochi", "Jiménez", "Meoqui",
+      "Nuevo Casas Grandes", "Bocoyna", "Guerrero", "Madera", "Urique", "Aquiles Serdán", "Balleza"
+    ]
+  },
+  {
+    "estado": "Ciudad de México",
+    "municipios": [
+      "Álvaro Obregón", "Azcapotzalco", "Benito Juárez", "Coyoacán",
+      "Cuajimalpa de Morelos", "Cuauhtémoc", "Gustavo A. Madero", "Iztacalco",
+      "Iztapalapa", "La Magdalena Contreras", "Miguel Hidalgo", "Milpa Alta",
+      "Tláhuac", "Tlalpan", "Venustiano Carranza", "Xochimilco"
+    ]
+  },
+  {
+    "estado": "Coahuila",
+    "municipios": [
+      "Acuña", "Monclova", "Piedras Negras", "Saltillo", "Torreón",
+      "Frontera", "Ramos Arizpe", "Sabinas", "San Pedro", "Muzquiz",
+      "Allende", "Arteaga", "Castaños", "Guerrero", "Hidalgo",
+      "Jiménez", "Nava", "Parras", "Viesca", "Zaragoza", "Matamoros", "San Buenaventura"
+    ]
+  },
+  {
+    "estado": "Colima",
+    "municipios": [
+      "Armería", "Colima", "Comala", "Coquimatlán", "Cuauhtémoc",
+      "Ixtlahuacán", "Manzanillo", "Minatitlán", "Tecomán", "Villa de Álvarez"
+    ]
+  },
+  {
+    "estado": "Durango",
+    "municipios": [
+      "Canatlán", "Cuencamé", "Durango", "El Salto", "Gómez Palacio",
+      "Guadalupe Victoria", "Lerdo", "Mapimí", "Mezquital", "Nombre de Dios",
+      "Nuevo Ideal", "Poanas", "Pueblo Nuevo", "San Dimas", "Santiago Papasquiaro",
+      "Súchil", "Tamazula", "Tepehuanes", "Vicente Guerrero", "Pánuco de Coronado"
+    ]
+  },
+  {
+    "estado": "Estado de México",
+    "municipios": [
+      "Atlacomulco", "Chalco", "Chimalhuacán", "Cuautitlán Izcalli", "Ecatepec de Morelos",
+      "Ixtapan de la Sal", "Metepec", "Naucalpan de Juárez", "Nezahualcóyotl",
+      "Nicolás Romero", "Tejupilco", "Texcoco", "Tlalnepantla de Baz",
+      "Toluca", "Tultitlán", "Valle de Bravo", "Zinacantepec", "Atizapán de Zaragoza", "Coacalco", "Huixquilucan"
+    ]
+  },
+  {
+    "estado": "Guanajuato",
+    "municipios": [
+      "Abasolo", "Acámbaro", "Apaseo el Alto", "Apaseo el Grande", "Celaya",
+      "Cortazar", "Dolores Hidalgo", "Guanajuato", "Irapuato", "Lagos de Moreno",
+      "León", "Manuel Doblado", "Moroleón", "Pénjamo", "Purísima del Rincón",
+      "Salamanca", "Salvatierra", "San Francisco del Rincón", "San Luis de la Paz",
+      "San Miguel de Allende", "Santa Cruz de Juventino Rosas", "Silao de la Victoria",
+      "Uriangato", "Valle de Santiago", "Villagrán", "Yuriria", "Jaral del Progreso", "Comonfort"
+    ]
+  },
+  {
+    "estado": "Guerrero",
+    "municipios": [
+      "Acapulco de Juárez", "Ayutla de los Libres", "Chilapa de Álvarez",
+      "Chilpancingo de los Bravo", "Coyuca de Benítez", "Huitzuco de los Figueroa",
+      "Iguala de la Independencia", "Ometepec", "Petatlán", "Taxco de Alarcón",
+      "Tecpan de Galeana", "Teloloapan", "Tixtla de Guerrero", "Zihuatanejo de Azueta", "Arcelia", "Pungarabato"
+    ]
+  },
+  {
+    "estado": "Hidalgo",
+    "municipios": [
+      "Actopan", "Huejutla de Reyes", "Ixmiquilpan", "Mineral del Monte",
+      "Mixquiahuala de Juárez", "Pachuca de Soto", "Tasquillo", "Tepeapulco",
+      "Tizayuca", "Tula de Allende", "Tulancingo de Bravo", "Zimapán", "Apan", "Metztitlán"
+    ]
+  },
+  {
+    "estado": "Jalisco",
+    "municipios": [
+      "Acatlán de Juárez", "Ameca", "Autlán de Navarro", "Casimiro Castillo",
+      "Chapala", "Ciudad Guzmán", "Guadalajara", "Lagos de Moreno",
+      "La Barca", "Ocotlán", "Puerto Vallarta", "San Juan de los Lagos",
+      "San Pedro Tlaquepaque", "Sayula", "Tepatitlán de Morelos", "Tlajomulco de Zúñiga",
+      "Tlaquepaque", "Tonalá", "Zapopan", "Zapotlán el Grande", "Arandas", "Tala"
+    ]
+  },
+  {
+    "estado": "Michoacán",
+    "municipios": [
+      "Apatzingán", "Hidalgo", "Huetamo", "Jiquilpan", "La Piedad",
+      "Lázaro Cárdenas", "Maravatío", "Morelia", "Pátzcuaro", "Purépero",
+      "Sahuayo", "Santa Ana Maya","Tacámbaro", "Uruapan", "Zamora", "Zitácuaro", "Cotija", "Jacona", "Quiroga"
+    ]
+  },
+  {
+    "estado": "Morelos",
+    "municipios": [
+      "Axochiapan", "Ayala", "Coatlán del Río", "Cuernavaca", "Cuautla",
+      "Emiliano Zapata", "Jantetelco", "Jiutepec", "Jojutla", "Jonacatepec",
+      "Mazatepec", "Miacatlán", "Ocuituco", "Puente de Ixtla", "Temixco",
+      "Temoac", "Tepalcingo", "Tepoztlán", "Tetecala", "Tetela del Volcán",
+      "Tlalnepantla", "Tlaltizapán", "Tlaquiltenango", "Tlayacapan",
+      "Totolapan", "Xochitepec", "Yautepec", "Yecapixtla", "Zacatepec", "Huitzilac"
+    ]
+  },
+  {
+    "estado": "Nayarit",
+    "municipios": [
+      "Acaponeta", "Ahuacatlán", "Amatlán de Cañas", "Bahía de Banderas",
+      "Compostela", "Del Nayar", "Huajicori", "Ixtlán del Río", "Jala",
+      "La Yesca", "Rosamorada", "Ruíz", "San Blas", "San Pedro Lagunillas",
+      "Santa María del Oro", "Santiago Ixcuintla", "Tecuala", "Tepic",
+      "Xalisco", "Tuxpan"
+    ]
+  },
+  {
+    "estado": "Nuevo León",
+    "municipios": [
+      "Allende", "Anáhuac", "Apodaca", "Cadereyta Jiménez", "Cerralvo",
+      "China", "Escobedo", "García", "San Pedro Garza García", "General Escobedo",
+      "Guadalupe", "Juárez", "Linares", "Montemorelos", "Monterrey",
+      "Sabinas Hidalgo", "Salinas Victoria", "San Nicolás de los Garza",
+      "Santa Catarina", "Santiago", "Galeana", "Doctor Arroyo"
+    ]
+  },
+  {
+    "estado": "Oaxaca",
+    "municipios": [
+      "Huajuapan de León", "Juchitán de Zaragoza", "Miahuatlán de Porfirio Díaz",
+      "Oaxaca de Juárez", "Ocotlán de Morelos", "Puerto Escondido", "Salina Cruz",
+      "San Juan Bautista Tuxtepec", "Tehuantepec", "Tlacolula de Matamoros",
+      "Tlaxiaco", "Zimatlán de Álvarez", "Loma Bonita", "Pinotepa Nacional", "Nochixtlán"
+    ]
+  },
+  {
+    "estado": "Puebla",
+    "municipios": [
+      "Atlixco", "Cholula", "Ciudad Serdán", "Huachinango", "Izúcar de Matamoros",
+      "Puebla", "San Andrés Cholula", "San Martín Texmelucan", "San Pedro Cholula",
+      "Tehuacán", "Tepeaca", "Teziutlán", "Zacatlán", "Amozoc", "Cuautlancingo", "Xicotepec"
+    ]
+  },
+  {
+    "estado": "Querétaro",
+    "municipios": [
+      "Amealco de Bonfil", "Arroyo Seco", "Cadereyta de Montes", "Colón",
+      "Corregidora", "El Marqués", "Ezequiel Montes", "Huimilpan",
+      "Jalpan de Serra", "Landa de Matamoros", "Pedro Escobedo",
+      "Peñamiller", "Pinal de Amoles", "Querétaro", "San Joaquín",
+      "San Juan del Río", "Tequisquiapan", "Tolimán"
+    ]
+  },
+  {
+    "estado": "Quintana Roo",
+    "municipios": [
+      "Bacalar", "Benito Juárez", "Cozumel", "Felipe Carrillo Puerto",
+      "Isla Mujeres", "José María Morelos", "Lázaro Cárdenas",
+      "Othón P. Blanco", "Puerto Morelos", "Solidaridad", "Tulum"
+    ]
+  },
+  {
+    "estado": "San Luis Potosí",
+    "municipios": [
+      "Aquismón", "Cárdenas", "Cd. Valles", "Charcas", "Ebano",
+      "Matehuala", "Rioverde", "Salinas", "San Luis Potosí",
+      "Soledad de Graciano Sánchez", "Tamazunchale", "Tamuín",
+      "Tancanhuitz", "Venado", "Villa de Reyes", "Xilitla", "Cerritos", "Ébano"
+    ]
+  },
+  {
+    "estado": "Sinaloa",
+    "municipios": [
+      "Ahome", "Angostura", "Badiraguato", "Choix", "Concordia",
+      "Cosalá", "Culiacán", "El Fuerte", "Elota", "Escuinapa",
+      "Guasave", "Mazatlán", "Mocorito", "Navolato", "Rosario", "Salvador Alvarado", "Sinaloa de Leyva"
+    ]
+  },
+  {
+    "estado": "Sonora",
+    "municipios": [
+      "Agua Prieta", "Álamos", "Altar", "Caborca", "Cajeme",
+      "Cananea", "Empalme", "Guaymas", "Hermosillo", "Huatabampo",
+      "Imuris", "Magdalena", "Navojoa", "Nogales", "Puerto Peñasco",
+      "San Luis Río Colorado", "Santa Ana", "Etchojoa", "Bácum"
+    ]
+  },
+  {
+    "estado": "Tabasco",
+    "municipios": [
+      "Balancán", "Cárdenas", "Centla", "Centro", "Comalcalco",
+      "Cunduacán", "Emiliano Zapata", "Huimanguillo", "Jalapa",
+      "Jalpa de Méndez", "Jonuta", "Macuspana", "Nacajuca",
+      "Paraíso", "Tacotalpa", "Teapa", "Tenosique"
+    ]
+  },
+  {
+    "estado": "Tamaulipas",
+    "municipios": [
+      "Altamira", "Ciudad Madero", "Ciudad Mante", "Ciudad Victoria",
+      "Guerrero", "Gustavo Díaz Ordaz", "Laredo", "Matamoros",
+      "Méndez", "Miguel Alemán", "Nuevo Laredo", "Nuevo Morelos",
+      "Padilla", "Reynosa", "Río Bravo", "San Fernando",
+      "Tampico", "Valle Hermoso", "Aldama", "Xicoténcatl"
+    ]
+  },
+  {
+    "estado": "Tlaxcala",
+    "municipios": [
+      "Apizaco", "Calpulalpan", "Chiautempan", "Huamantla",
+      "Nanacamilpa de Mariano Arista", "Papalotla de Xicohténcatl",
+      "Santa Cruz Tlaxcala", "Tlaxcala", "Tlaxco", "Zacatelco", "Contla", "San Pablo del Monte"
+    ]
+  },
+  {
+    "estado": "Veracruz",
+    "municipios": [
+      "Coatzacoalcos", "Córdoba", "Fortín", "Huatusco", "Jalapa",
+      "Las Choapas", "Martínez de la Torre", "Minatitlán", "Nautla",
+      "Orizaba", "Papantla", "Poza Rica de Hidalgo", "San Andrés Tuxtla",
+      "Tantoyuca", "Tuxpan", "Veracruz", "Xalapa", "Boca del Río", "Cosamaloapan", "Tlacotalpan"
+    ]
+  },
+  {
+    "estado": "Yucatán",
+    "municipios": [
+      "Dzitás", "Espita", "Izamal", "Kanasín", "Mérida",
+      "Motul", "Oxkutzcab", "Progreso", "Tekax", "Ticul",
+      "Tizimín", "Uman", "Valladolid", "Hunucmá", "Chemax"
+    ]
+  },
+  {
+    "estado": "Zacatecas",
+    "municipios": [
+      "Calera", "Concepción del Oro", "Fresnillo", "Guadalupe",
+      "Jalpa", "Jerez", "Juan Aldama", "Loreto", "Luis Moya",
+      "Mazapil", "Miguel Auza", "Momax", "Monte Escobedo",
+      "Nochistlán de Mejía", "Ojocaliente", "Pinos", "Río Grande",
+      "Sombrerete", "Tepechitlán", "Tepetongo", "Tlaltenango de Sánchez Román",
+      "Valparaíso", "Vetagrande", "Villa de Cos", "Villa García",
+      "Villa González Ortega", "Villa Hidalgo", "Villanueva", "Zacatecas", "Trancoso"
+    ]
+  }
+]

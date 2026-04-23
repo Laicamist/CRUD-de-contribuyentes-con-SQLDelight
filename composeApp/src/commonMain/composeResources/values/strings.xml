@@ -12,7 +12,7 @@
     <string name="title_details_moral">Detalle Moral</string>
     <string name="title_details_Socios">Detalle Socios</string>
     <string name="title_listaMorales">Listas de contribuyentes morales</string>
-    <string name="title_listaFisicas">Lista de contribuyentes fisicas</string>
+    <string name="title_listaFisicas">Lista de contribuyentes fisicos</string>
     <string name="title_deleteMoral">Borrar persona Moral</string>
     <string name="title_deleteFisica">Borrar persona Fisica</string>
 

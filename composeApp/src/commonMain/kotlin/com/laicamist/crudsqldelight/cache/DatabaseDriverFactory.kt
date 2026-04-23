@@ -2,6 +2,7 @@ package com.laicamist.crudsqldelight.cache
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOneOrNull
 import app.cash.sqldelight.db.SqlDriver
 import cache.*
 import kotlinx.coroutines.Dispatchers
@@ -11,128 +12,137 @@ interface DatabaseDriverFactory {
     fun createDriver(): SqlDriver
 }
 
-internal class Database(databaseDriverFactory : DatabaseDriverFactory) {
+ class Database(databaseDriverFactory : DatabaseDriverFactory) {
     private val database = AppDatabase(databaseDriverFactory.createDriver())
     private val dbQuery = database.appDatabaseQueries
-    // 1. ENTRADA DE DATOS (INSERTS)
-    internal fun insertarEstado(id: Long, nombre: String) {
-        dbQuery.insertarEstado(id, nombre)
+
+    // 1. ENTRADA DE DATOS
+    fun getAll(): List<Contribuyente> {
+        return dbQuery.selectAll().executeAsList()
     }
 
-    internal fun insertarMunicipio(id: Long, estadoId: Long, nombre: String) {
-        dbQuery.insertarMunicipio(id, estadoId, nombre)
+    fun getAllStream(): Flow<List<Contribuyente>> {
+        return dbQuery.selectAll().asFlow().mapToList(Dispatchers.IO)
     }
 
-    internal fun insertarDomicilio(
-        cp: String, estadoId: Long, municipioId: Long, tipoVialidad: String,
-        localidad: String, colonia: String, calle: String,
-        numeroExterior: String, numeroInterior: String?, entreCalle1: String,
-        entreCalle2: String, referencias: String, caracteristicas: String
-    ) {
-        dbQuery.insertarDomicilio(
-            cp, estadoId, municipioId, tipoVialidad, localidad, colonia,
-            calle, numeroExterior, numeroInterior, entreCalle1, entreCalle2,
-            referencias, caracteristicas
+
+    fun insert(contribuyente: Contribuyente) {
+        dbQuery.insert(
+            contribuyente.tipo,
+            contribuyente.curp,
+            contribuyente.nombre,
+            contribuyente.apellido_paterno,
+            contribuyente.apellido_materno,
+            contribuyente.fecha_nacimiento,
+            contribuyente.fecha_constitucion,
+            contribuyente.email,
+            contribuyente.telefono,
+            contribuyente.razon_social,
+            contribuyente.rfc,
+            contribuyente.rfc_socios,
+            contribuyente.poliza,
+            contribuyente.estado_id,
+            contribuyente.municipio_id,
+            contribuyente.cp,
+            contribuyente.actividad_economica,
+            contribuyente.regimen_fiscal,
+            contribuyente.regimen_capital,
+            contribuyente.localidad,
+            contribuyente.colonia,
+            contribuyente.calle,
+            contribuyente.numero_exterior,
+            contribuyente.numero_interior,
+            contribuyente.tipo_vialidad,
+            contribuyente.nombre_vialidad,
+            contribuyente.entre_calle1,
+            contribuyente.entre_calle2,
+            contribuyente.referencia_adicional,
+            contribuyente.caracteristicas_domicilio
         )
     }
 
-    internal fun obtenerUltimoId(): Long = dbQuery.obtenerUltimoId().executeAsOne()
 
-    internal fun insertarPersonaFisica(
-        rfc: String, curp: String, nombre: String, apellidos: String,
-        fechaDeNacimiento: String, email: String, telefono: String,
-        actEconomica: String, regFiscal: String, idDomicilio: Long
-    ) {
-        dbQuery.insertarPersonaFisica(rfc, curp, nombre, apellidos, fechaDeNacimiento, email, telefono, actEconomica, regFiscal, idDomicilio)
+    fun deleteById(id: Long) {
+        dbQuery.deleteByID(id)
     }
 
-    internal fun insertarPersonaMoral(
-        rfc: String, denominacionORazonSocial: String, regimenCapital: String,
-        fechaDeConstitucion: String, rfcDelRepresentante: String,
-        numEscrituraOpoliza: String, actividadEconomica: String, idDomicilio: Long
-    ) {
-        dbQuery.insertarPersonaMoral(rfc, denominacionORazonSocial, regimenCapital, fechaDeConstitucion, rfcDelRepresentante, numEscrituraOpoliza, actividadEconomica, idDomicilio)
+    fun delete(contribuyente: Contribuyente) {
+        dbQuery.deleteByID(contribuyente.id)
     }
 
-    internal fun insertarSocio(idPersonaMoral: Long, rfcSocio: String) {
-        dbQuery.insertarSocio(idPersonaMoral, rfcSocio)
+
+    fun getById(id: Long): Flow<Contribuyente?> {
+        return dbQuery.getByID(id).asFlow().mapToOneOrNull(Dispatchers.IO)
     }
 
-    // 2. CONSULTAS
-    internal fun consultarFisicaPorRFC(rfc: String): ConsultarFisicaPorRFC? =
-        dbQuery.consultarFisicaPorRFC(rfc).executeAsOneOrNull()
 
-    internal fun consultarMoralPorRFC(rfc: String): ConsultarMoralPorRFC? =
-        dbQuery.consultarMoralPorRFC(rfc).executeAsOneOrNull()
-
-    internal fun consultarDomicilioPorId(id: Long): ConsultarDomicilioPorId? =
-        dbQuery.consultarDomicilioPorId(id).executeAsOneOrNull()
-
-    internal fun consultarSociosPorIdEmpresa(idEmpresa: Long): List<String> =
-        dbQuery.consultarSociosPorIdEmpresa(idEmpresa).executeAsList()
-
-    // --- 3. LISTADOS
-    internal fun listarFisicasBase(): Flow<List<ListarFisicasBase>> =
-        dbQuery.listarFisicasBase().asFlow().mapToList(Dispatchers.IO)
-
-    internal fun listarMoralesBase(): Flow<List<ListarMoralesBase>> =
-        dbQuery.listarMoralesBase().asFlow().mapToList(Dispatchers.IO)
-
-    internal fun listarEstados(): Flow<List<Estado>> =
-        dbQuery.listarEstados().asFlow().mapToList(Dispatchers.IO)
-
-    internal fun listarMunicipiosPorEstado(estadoId: Long): Flow<List<ListarMunicipiosPorEstado>> =
-        dbQuery.listarMunicipiosPorEstado(estadoId).asFlow().mapToList(Dispatchers.IO)
-
-    internal fun obtenerNombreEstadoPorId(id: Long): String? =
-        dbQuery.obtenerNombreEstadoPorId(id).executeAsOneOrNull()
-
-    internal fun obtenerNombreMunicipioPorId(id: Long): String? =
-        dbQuery.obtenerNombreMunicipioPorId(id).executeAsOneOrNull()
-
-    // --- 4. VALIDACIONES Y UPDATES ---
-    internal fun existeRFCFisica(rfc: String): Boolean =
-        dbQuery.existeRFCFisica(rfc).executeAsOne() > 0
-
-    internal fun existeRFCMoral(rfc: String): Boolean =
-        dbQuery.existeRFCMoral(rfc).executeAsOne() > 0
-
-    internal fun actualizarPersonaFisica(rfc: String, email: String, telefono: String, actEconomica: String, regFiscal: String) {
-        dbQuery.actualizarPersonaFisica(email, telefono, actEconomica, regFiscal, rfc)
+    fun getByRFC(rfc: String): Flow<Contribuyente?> {
+        return dbQuery.getByRFC(rfc).asFlow().mapToOneOrNull(Dispatchers.IO)
     }
 
-    internal fun actualizarPersonaMoral(rfc: String, razonSocial: String, regimen: String, actividad: String, rfcRep: String, numEsc: String) {
-        dbQuery.actualizarPersonaMoral(razonSocial, regimen, actividad, rfcRep, numEsc, rfc)
+
+    fun update(contribuyente: Contribuyente) {
+        dbQuery.update(
+            contribuyente.tipo,
+            contribuyente.curp,
+            contribuyente.nombre,
+            contribuyente.apellido_paterno,
+            contribuyente.apellido_materno,
+            contribuyente.fecha_nacimiento,
+            contribuyente.fecha_constitucion,
+            contribuyente.email,
+            contribuyente.telefono,
+            contribuyente.razon_social,
+            contribuyente.rfc,
+            contribuyente.rfc_socios,
+            contribuyente.poliza,
+            contribuyente.estado_id,
+            contribuyente.municipio_id,
+            contribuyente.cp,
+            contribuyente.actividad_economica,
+            contribuyente.regimen_fiscal,
+            contribuyente.regimen_capital,
+            contribuyente.localidad,
+            contribuyente.colonia,
+            contribuyente.calle,
+            contribuyente.numero_exterior,
+            contribuyente.numero_interior,
+            contribuyente.tipo_vialidad,
+            contribuyente.nombre_vialidad,
+            contribuyente.entre_calle1,
+            contribuyente.entre_calle2,
+            contribuyente.referencia_adicional,
+            contribuyente.caracteristicas_domicilio,
+            contribuyente.id
+        )
     }
 
-    internal fun actualizarDomicilio(
-        idDomicilio: Long, cp: String, estadoId: Long, municipioId: Long, localidad: String,
-        colonia: String, tipoVialidad: String, calle: String, numeroExterior: String,
-        numeroInterior: String?, entreCalle1: String, entreCalle2: String, referencias: String, caracteristicas: String
-    ) {
-        dbQuery.actualizarDomicilio(cp, estadoId, municipioId, localidad, colonia, tipoVialidad, calle, numeroExterior, numeroInterior, entreCalle1, entreCalle2, referencias, caracteristicas, idDomicilio)
+
+    fun getEstados(): List<Estado> {
+        return dbQuery.getEstados().executeAsList()
     }
 
-    internal fun contarEstados(): Long =
-        dbQuery.contarEstados().executeAsOne()
 
-    //5. ELIMINACIÓN
-    internal fun eliminarPersonaFisicaCompleta(rfc: String) {
-        database.transaction {
-            val idDom = dbQuery.obtenerIdsParaBorrarFisica(rfc).executeAsOneOrNull()
-            dbQuery.eliminarPersonaFisica(rfc)
-            idDom?.let { dbQuery.eliminarDomicilioPorId(it) }
-        }
+    fun getMunicipiosByEstado(estadoId: Long): List<Municipio> {
+        return dbQuery.getMunicipiosByEstado(estadoId).executeAsList()
     }
 
-    internal fun eliminarPersonaMoralCompleta(rfc: String) {
-        database.transaction {
-            val ids = dbQuery.obtenerIdsParaBorrarMoral(rfc).executeAsOneOrNull()
-            ids?.let {
-                dbQuery.eliminarSociosPorEmpresa(it.id)
-                dbQuery.eliminarPersonaMoral(rfc)
-                dbQuery.eliminarDomicilioPorId(it.idDomicilio)
-            }
-        }
+    fun insertEstado(nombre: String) {
+        dbQuery.insertEstado(nombre)
+    }
+
+    fun insertMunicipio(nombre: String, estadoId: Long) {
+        dbQuery.insertMunicipio(nombre, estadoId)
+    }
+    fun getEstadoByID(id: Long): Estado {
+        return dbQuery.getEstadoByID(id).executeAsOne()
+    }
+    fun getMunicipioByID(id: Long): Municipio {
+        return dbQuery.getMunicipioByID(id).executeAsOne()
+    }
+    fun reiniciarBD() {
+        dbQuery.deleteAllContribuyentes()
+        dbQuery.deleteAllMunicipios()
+        dbQuery.deleteAllEstados()
     }
 }
