@@ -32,54 +32,54 @@ pasando de ser inter a Inter, solo tienes que corregir el referenciado en el arc
 ## Home Screen
 Esta es la bienvenida a nuestro proyecto CRUD se ofrecen las opciones de seleccion de persona moral y persona fisica
 
-<img src="mediosDigitales/Captura de pantalla 2026-04-23 043427.png" width="80%" alt="Home Screen">
+<img src="Captura de pantalla 2026-04-23 043427.png" width="80%" alt="Home Screen">
 
 ## Lista de personas fisicas
 Dentro de esta pantalla se cargan todas personas fisicas que fueron agregadas previamente a la base de datos, de lo contrario aparece vació, desde esta pantalla
 tenemos acceso a ver detalles de una persona fisica y a agregar personas fisicas
 
-<img src="mediosDigitales/Captura de pantalla 2026-04-23 043523.png" width="80%" alt="ListaFisicas">
+<img src="Captura de pantalla 2026-04-23 043523.png" width="80%" alt="ListaFisicas">
 
 ## Detalles de persona fisica
 En esta pantalla se despliega toda la información técnica y personal del contribuyente. Es la capa de consulta profunda donde el usuario puede verificar que el 
 RFC y el Régimen Fiscal sean correctos antes de realizar cualquier movimiento.
 
-<img src="mediosDigitales/Captura de pantalla 2026-04-23 043553.png" width="80%" alt="DetalleFisicas">
+<img src="Captura de pantalla 2026-04-23 043553.png" width="80%" alt="DetalleFisicas">
 
 ## Editar persona fisica
 Esta interfaz reutiliza el formulario de registro pero carga los datos existentes desde SQLDelight. Permite corregir errores de captura 
 manteniendo la integridad del ID único en la base de datos.
 
-<img src="mediosDigitales/Captura de pantalla 2026-04-23 043637.png" width="80%" alt="EditarFisicas">
+<img src="Captura de pantalla 2026-04-23 043637.png" width="80%" alt="EditarFisicas">
 
 ## Registro persona fisica 
 Formulario de alta donde se aplican las validaciones de negocio.
 
-<img src="mediosDigitales/Captura de pantalla 2026-04-23 043702.png" width="80%" alt="RegistroFisicas">
+<img src="Captura de pantalla 2026-04-23 043702.png" width="80%" alt="RegistroFisicas">
 
 ## Lista de personas morales
 Un listado optimizado que muestra las entidades legales registradas. Utiliza LazyColumn para manejar grandes volúmenes de datos 
 y se actualiza automáticamente gracias a los Flows de SQLDelight cuando se añade una nueva empresa.
 
-<img src="mediosDigitales/Captura de pantalla 2026-04-23 043730.png" width="80%" alt="ListaMorales">
+<img src="Captura de pantalla 2026-04-23 043730.png" width="80%" alt="ListaMorales">
 
 ## Detalles de persona moral
 Presenta la información corporativa, diferenciando claramente los campos únicos de las morales, 
 como la razón social y la estructura de su RFC (12 caracteres).
 
-<img src="mediosDigitales/Captura de pantalla 2026-04-23 043751.png" width="80%" alt="DetallesMorales">
+<img src="Captura de pantalla 2026-04-23 043751.png" width="80%" alt="DetallesMorales">
 
 ## Editar persona moral
 Pantalla dedicada a la actualización de datos empresariales. Garantiza que cualquier cambio en el régimen moral se 
 refleje de inmediato en todos los módulos del sistema.
 
-<img src="mediosDigitales/Captura de pantalla 2026-04-23 043814.png" width="80%" alt="EditarMoral">
+<img src="Captura de pantalla 2026-04-23 043814.png" width="80%" alt="EditarMoral">
 
 ## Registro persona moral
 El punto de entrada para nuevas entidades legales. Incluye validaciones específicas para asegurar que la información 
 cumpla con los estándares requeridos para la simulación fiscal.
 
-<img src="mediosDigitales/Captura de pantalla 2026-04-23 043835.png" width="80%" alt="RegistroMoral">
+<img src="Captura de pantalla 2026-04-23 043835.png" width="80%" alt="RegistroMoral">
 
 # Conclusión
 Este proyecto representó un desafío técnico significativo que me permitió profundizar en el ecosistema de Kotlin Multiplatform (KMP). A través de su desarrollo, logré consolidar conocimientos críticos en:
