@@ -30,7 +30,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ListaFisicasScreen(navController: NavController, viewModel: DataViewModel, satViewModel: SatViewModel) {
-    // Enlista todos los contribuyentes y filtra por tipo Fisica
+    // Enlistado de todos los contribuyentes filtrando por tipo
     val todosLosContribuyentes by satViewModel.contribuyentes.collectAsState()
     val personasFisicas = todosLosContribuyentes.filter {
         it.tipo.equals("Fisica", ignoreCase = true)

@@ -101,7 +101,6 @@ fun MenuOptionCard(
                 .padding(horizontal = 24.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Círculo decorativo para el icono
             Surface(
                 modifier = Modifier.size(52.dp),
                 shape = CircleShape,
@@ -119,7 +118,7 @@ fun MenuOptionCard(
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold // Usará Inter SemiBold de tu Typography
+                fontWeight = FontWeight.SemiBold
             )
         }
     }

@@ -26,17 +26,12 @@ class SatViewModel(
     }
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            // 1. Seed estados
             if (sat.getEstados().isEmpty()) {
                 DataSeeder.seedEstados(sat)
             }
-
-            // 2. Seed municipios (await, no lanza corrutina separada)
             val bytes = Res.readBytes("files/municipios.json")
             val inputStream = bytes.inputStream()
             DataSeeder.seedFromJson(sat, inputStream)
-
-            // 3. Cargar datos DESPUÉS de que el seed terminó
             loadEstados()
             loadContribuyentes()
         }

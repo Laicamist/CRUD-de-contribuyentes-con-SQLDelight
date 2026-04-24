@@ -161,11 +161,11 @@ class DataViewModel(private val sat: Database) : ViewModel() {
         satViewModel: SatViewModel
     ) {
         val actualizado = Contribuyente(
-            id = d.estadoId, // Este ID es el que cargamos en 'prepararEdicion'
+            id = d.estadoId,
             tipo = "Fisica",
             nombre = f.nombre,
             apellido_paterno = f.apellidos,
-            apellido_materno = null, // Puedes agregar este campo a tu fisicaState si lo necesitas
+            apellido_materno = null,
             rfc = f.rfc,
             curp = f.curp,
             email = f.email,
@@ -213,8 +213,6 @@ class DataViewModel(private val sat: Database) : ViewModel() {
         updateFisica {
             it.copy(rfc = c.rfc ?: "")
         }
-
-        // El RFC de socios en su estado correspondiente
         updateSocio {
             it.copy(rfcSocio = c.rfc_socios ?: "")
         }
@@ -273,16 +271,12 @@ class DataViewModel(private val sat: Database) : ViewModel() {
             referencia_adicional = d.referencias,
             caracteristicas_domicilio = d.caracteristicas,
             nombre_vialidad = d.calle,
-
-            // Campos de Física en null (obligatorios en el constructor)
             apellido_paterno = null,
             apellido_materno = null,
             curp = null,
             email = null,
             telefono = null,
             fecha_nacimiento = null,
-
-            // Campo final que pedía el IDE en la captura
             regimen_fiscal = "General de Ley Personas Morales"
         )
 

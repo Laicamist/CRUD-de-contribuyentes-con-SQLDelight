@@ -144,8 +144,8 @@ fun DetallesFisicaScreen(
                     TextButton(
                         onClick = {
                             contribuyente?.let {
-                                viewModel.delete(it) // Ejecuta la eliminación en SatViewModel
-                                navController.popBackStack() // Regresa a la lista
+                                viewModel.delete(it)
+                                navController.popBackStack()
                             }
                             dialogoDeBorrado = false
                         }
